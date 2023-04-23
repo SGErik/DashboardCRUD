@@ -13,40 +13,32 @@ const AppRoutes = () => {
     const Private = ({ children }) => {
 
         const { isAuthenticated } = useSelector(state => state.authReducer)
-
-
-        if (!isAuthenticated) {
-            return <Navigate to="/login" />
+        
+        
+            if (!isAuthenticated) {
+                    return <Navigate to="/login" />
+                }
+            
+                return children
+            
         }
-
-        return children
-
-    }
-
-    const AuthLogin = ({ children }) => {
-        const token = localStorage.getItem('token')
-
-
-        if(token){
-            return <Navigate to='/home' />
-        }
-
-        return children
-    }
-
+            
     
+
+
+
 
     return (
         <Router>
-            
-                <Routes >
 
-                    <Route exact path='/login' element={<Login />}/>
-                    <Route exact path='/home' element={<Private><Home /></Private>} />
+            <Routes >
 
-                </Routes>
+                <Route exact path='/login' element={<Login />} />
+                <Route path='/home' element={<Private><Home /></Private>} />
 
-            
+            </Routes>
+
+
         </Router>
     )
 }

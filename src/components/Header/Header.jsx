@@ -6,6 +6,9 @@ import S from './Header.module.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../store/user/user.actions';
 import { useNavigate } from 'react-router-dom';
+import { Icon } from '@rsuite/icons';
+import  {FaAddressBook}  from 'react-icons/fa';
+
 
 
 
@@ -34,7 +37,7 @@ const Header = () => {
       <Navbar>
         <Navbar.Brand href="/home">Dashboard</Navbar.Brand>
         <Nav>
-          <Nav.Item icon={<HomeIcon />}>Home</Nav.Item>
+          <Nav.Item icon={<Icon as={FaAddressBook} size="1.5em"/>}>Lista de Usuários</Nav.Item>
         </Nav>
         <Nav pullRight>
           <Nav.Item onClick={handleLogout}>Logout</Nav.Item>
