@@ -8,6 +8,8 @@ import { logout } from '../../store/user/user.actions';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@rsuite/icons';
 import  {FaAddressBook}  from 'react-icons/fa';
+import { ImExit } from "react-icons/im";
+import { RxDashboard } from "react-icons/rx";
 
 
 
@@ -35,12 +37,14 @@ const Header = () => {
   return (
     
       <Navbar>
-        <Navbar.Brand href="/home">Dashboard</Navbar.Brand>
         <Nav>
-          <Nav.Item icon={<Icon as={FaAddressBook} size="1.5em"/>}>Lista de Usuários</Nav.Item>
+         <Nav.Item icon={<Icon as={RxDashboard} size='1.1em'/>}>Dashboard</Nav.Item>
+        </Nav>
+        <Nav>
+          <Nav.Item href='/home' icon={<Icon as={FaAddressBook} size="1.3em"/>}>Lista de Usuários</Nav.Item>
         </Nav>
         <Nav pullRight>
-          <Nav.Item onClick={handleLogout}>Logout</Nav.Item>
+          <Nav.Item icon={<Icon as={ImExit} />} onClick={handleLogout}>Logout</Nav.Item>
         </Nav>
       </Navbar>
     
