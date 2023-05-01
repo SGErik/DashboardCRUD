@@ -120,6 +120,11 @@ const Home = () => {
 
         setPasswordModal(false)
 
+        setFormPass({
+          prevPassword: '',
+          passoword: ''
+        })
+
       })
 
       .catch((error) => {
@@ -186,22 +191,18 @@ const Home = () => {
         height={600}
         data={data}
       >
-        <Column width={60} align="center" fixed>
-          <HeaderCell>Id</HeaderCell>
-          <Cell dataKey="id" />
-        </Column>
 
-        <Column width={150}>
+        <Column width={300} align='center'>
           <HeaderCell>Nome</HeaderCell>
           <Cell dataKey="name" />
         </Column>
 
-        <Column width={300}>
+        <Column width={300} align='center'>
           <HeaderCell>Email</HeaderCell>
           <Cell dataKey="email" />
         </Column>
         
-        <Column width={200} align='center' fixed="right">
+        <Column width={200} align='center'>
           <HeaderCell>Editar Informações</HeaderCell>
 
           <Cell style={{ padding: '6px' }}>
@@ -215,7 +216,7 @@ const Home = () => {
         </Column>
         
         
-        <Column width={200} align='center' fixed="right">
+        <Column width={200} align='center'>
 
           <HeaderCell>Deletar Usuário</HeaderCell>
           <Cell style={{ padding: '6px' }}>
@@ -230,7 +231,7 @@ const Home = () => {
 
 
 
-        <Column width={200} align='center' fixed="right">
+        <Column width={200} align='center'>
 
           <HeaderCell>Editar Senha</HeaderCell>
           <Cell style={{ padding: '6px' }}>

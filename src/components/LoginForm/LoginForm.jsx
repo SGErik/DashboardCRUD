@@ -58,7 +58,6 @@ const LoginForm = () => {
         })
 
 
-        console.log(response)
 
 
     }
@@ -89,7 +88,8 @@ const LoginForm = () => {
 
 
         }).catch((error) => {
-            message = <Message showIcon type='error' closable>Erro: {error.response.data.message}</Message>
+            message = <Message showIcon type='error' closable>{error.response.data.message}</Message>
+            
             toaster.push(message, { placement: 'topEnd', duration: 5000 })
 
         })
