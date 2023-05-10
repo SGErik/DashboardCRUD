@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from '../../components/Header/Header'
-import { api, getUsers, deleteUsers, getOneUser, updateUser, updatePassword } from '../../services/api'
+import { api, getUsers, deleteUsers, getOneUser, updateUser, updatePassword, createUsers } from '../../services/api'
 import { Table, Button, useToaster, Message, Modal, IconButton, Form, FlexboxGrid } from 'rsuite'
 import { useState } from 'react'
 import { useEffect } from 'react'
@@ -30,6 +30,13 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState(null)
   const [addModal, setAddModal] = useState(false)
   const [passwordModal, setPasswordModal] = useState(false)
+  const [formValue, setFormValue] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmedPassword: '',
+    image: ''
+  })
   const [formEdit, setFormEdit] = useState({
     name: '',
     email: '',
@@ -38,13 +45,6 @@ const Home = () => {
   const [formPass, setFormPass] = useState({
     prevPassword: '',
     password: ''
-  })
-  const [formValue, setFormValue] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmedPassword: '',
-    image: ''
   })
 
 
@@ -65,6 +65,31 @@ const Home = () => {
     fetchUsers()
 
   }, [])
+
+
+  const handleAddUser = (e) => {
+    e.preventDefault()
+    const response = createUsers(formValue).then((response) => {
+
+      message = <Message showIcon type='success' closable>Usuário adicionado com sucesso!</Message>
+      toaster.push(message, { placement: 'topEnd', duration: 5000 })
+      setAddModal(false)
+      setFormValue({
+        name: '',
+        email: '',
+        password: '',
+        confirmedPassword: '',
+        image: ''
+      })
+      fetchUsers()
+
+    }).catch((error) => {
+
+      message = <Message showIcon type='error' closable >{error.response.data.message ? error.response.data.message : error.response.data.error.errors[0].message}</Message>
+      toaster.push(message, { placement: 'topEnd', duration: 5000 })
+
+    })
+  }
 
 
 
@@ -158,6 +183,17 @@ const Home = () => {
     })
   }
 
+
+  //Função de Adicionar Usuário
+  const handleImageAdd = async (e) => {
+    const file = e.target.files[0]
+    const base64Image = await convertToBase64(file)
+    setFormValue(prevState => ({
+      ...prevState,
+      image: base64Image
+    }))
+
+  }
 
 
   const handleImageEdit = async (e) => {
@@ -398,7 +434,7 @@ const Home = () => {
           <Form fluid onChange={setFormValue} formValue={formValue}>
             <Form.Group controlId="file-9">
               <Form.ControlLabel>Selecione a foto do usuário</Form.ControlLabel>
-              <input type='file' />
+              <input type='file' onChange={handleImageAdd}/>
               <Form.HelpText>Arquivos suportados: JPG, PNG, JFIF e RAW</Form.HelpText>
             </Form.Group>
             <Form.Group controlId="name-9">
@@ -427,7 +463,7 @@ const Home = () => {
           <Button onClick={handleClose} appearance="subtle">
             Cancelar
           </Button>
-          <Button  appearance="primary" color={"green"}>
+          <Button  appearance="primary" color={"green"} onClick={handleAddUser}>
             Adicionar
           </Button>
         </Modal.Footer>
