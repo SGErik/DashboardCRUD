@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../../components/Header/Header'
 import { api, getUsers, deleteUsers, getOneUser, updateUser, updatePassword } from '../../services/api'
-import { Table, Button, useToaster, Message, Modal, IconButton, Form } from 'rsuite'
+import { Table, Button, useToaster, Message, Modal, IconButton, Form, FlexboxGrid } from 'rsuite'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
@@ -9,6 +9,7 @@ import "rsuite/dist/rsuite.min.css";
 import { Icon } from '@rsuite/icons';
 import { MdDeleteForever, MdPassword } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa"
+import S from './Home.module.css'
 
 
 
@@ -27,15 +28,25 @@ const Home = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [updateModal, setUpdateModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
+  const [addModal, setAddModal] = useState(false)
   const [passwordModal, setPasswordModal] = useState(false)
   const [formEdit, setFormEdit] = useState({
     name: '',
     email: '',
+    image: ''
   })
   const [formPass, setFormPass] = useState({
     prevPassword: '',
     password: ''
   })
+  const [formValue, setFormValue] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmedPassword: '',
+    image: ''
+  })
+
 
 
   //Função que da um Get nas informações do banco de dados
@@ -67,7 +78,6 @@ const Home = () => {
       .then((response) => {
 
         message = <Message showIcon type='success' closable>{response.data.message}</Message>
-
         toaster.push(message, { placement: 'topEnd', duration: 5000 })
         setUpdateModal(false)
 
@@ -92,17 +102,12 @@ const Home = () => {
 
       fetchUsers()
 
-
-
     }).catch((error) => {
 
       console.log(error)
 
       message = <Message showIcon type='error' closable>{error.response.data.message}</Message>
-
       toaster.push(message, { placement: 'topEnd', duration: 5000 })
-
-
     })
 
   }
@@ -115,7 +120,6 @@ const Home = () => {
       .then((response) => {
       
         message = <Message showIcon type='success' closable>{response.data.message}</Message>
-
         toaster.push(message, { placement: 'topEnd', duration: 5000 })
 
         setPasswordModal(false)
@@ -147,15 +151,45 @@ const Home = () => {
       
       setFormEdit({
         name: response.data.user.name,
-        email: response.data.user.email
+        email: response.data.user.email,
+        image: response.data.user.url
       })
       setUpdateModal(true)
     })
-
-
   }
 
 
+
+  const handleImageEdit = async (e) => {
+    const file = e.target.files[0]
+    const base64Image = await convertToBase64(file)
+    setFormEdit(prevState => ({
+      ...prevState,
+      image: base64Image
+    }))
+  console.log(base64Image)
+  }
+
+  //Função utilizada para a transformação da imagem em base64
+  const convertToBase64 = (file) => {
+
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file)
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      }
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      }
+
+    })
+  }
+
+
+  //Componente personalizado para utilização de avatar na Tabela
   const ImageCell = ({ rowData, dataKey, ...props }) => (
     <Cell {...props} style={{ padding: 0 }}>
       <div
@@ -173,8 +207,8 @@ const Home = () => {
       </div>
     </Cell>
   );
-  
-  
+
+
   const handleDeleteModalOpen = (userId) => {
     setDeleteModal(true)
     setSelectedUser(userId)
@@ -186,13 +220,16 @@ const Home = () => {
     setSelectedUser(userId)
 
   }
-
+  const handleAddModalOpen = () => {
+    setAddModal(true)
+  }
 
 
   const handleClose = () => {
     setUpdateModal(false)
     setDeleteModal(false)
     setPasswordModal(false)
+    setAddModal(false)
   }
 
 
@@ -203,29 +240,31 @@ const Home = () => {
     <div>
       {/* Necessário para a abertura do toaster */}
       {message}
-
-      <Header />
-      <Table
+        <Header onClickProp={handleAddModalOpen}/>
+        <FlexboxGrid align={"middle"} justify={"center"}>
+            <FlexboxGrid.Item colspan={17}>
+              <Table
         loading={loading}
+        width={900}
         height={600}
         data={data}
-      >
-        <Column width={90} align='center'>
+        >
+        <Column width={90} align='center' >
           <HeaderCell>Avatar</HeaderCell>
           <ImageCell dataKey="url"/>
         </Column>
 
-        <Column width={200} align='center'>
+        <Column width={150} align='start'>
           <HeaderCell>Nome</HeaderCell>
           <Cell dataKey="name" />
         </Column>
 
-        <Column width={300} align='center'>
+        <Column width={300} align='start'>
           <HeaderCell>Email</HeaderCell>
           <Cell dataKey="email" />
         </Column>
-        
-        <Column width={200} align='center'>
+
+        <Column width={130} align='center' fixed={"right"}>
           <HeaderCell>Editar Informações</HeaderCell>
 
           <Cell style={{ padding: '6px' }}>
@@ -237,9 +276,9 @@ const Home = () => {
           </Cell>
 
         </Column>
-        
-        
-        <Column width={200} align='center'>
+
+
+        <Column width={130} align='center' fixed={"right"}>
 
           <HeaderCell>Deletar Usuário</HeaderCell>
           <Cell style={{ padding: '6px' }}>
@@ -250,11 +289,7 @@ const Home = () => {
           </Cell>
         </Column>
 
-
-
-
-
-        <Column width={200} align='center'>
+          <Column width={130} align='center' fixed={"right"}>
 
           <HeaderCell>Editar Senha</HeaderCell>
           <Cell style={{ padding: '6px' }}>
@@ -262,14 +297,12 @@ const Home = () => {
 
               <IconButton appearance='primary' color='green' icon={<Icon as={MdPassword} />} onClick={async () => handlePasswordModalOpen(rowData.id)}></IconButton>
             )}
-
-
-
           </Cell>
+          </Column>
 
-
-        </Column>
-      </Table>
+        </Table>
+            </FlexboxGrid.Item>
+        </FlexboxGrid>
 
       {/* Modal de Deleção de Informações */}
       <Modal open={deleteModal} onClose={handleClose} size='xs'>
@@ -293,8 +326,14 @@ const Home = () => {
         <Modal.Header>
           <Modal.Title>Atualizar Informação</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Form fluid onChange={setFormEdit} formValue={formEdit}>
+        <Modal.Body align='center'>
+          <img alt='avatar' src={formEdit.image} className={S.imageAvatar} />
+          <Form fluid onChange={setFormEdit} formValue={formEdit} align='start'>
+            <Form.Group controlId="file-9">
+              <Form.ControlLabel>Selecione sua foto</Form.ControlLabel>
+              <input type='file' onChange={handleImageEdit}/>
+              <Form.HelpText>Arquivos suportados: JPG, PNG, JFIF e RAW</Form.HelpText>
+            </Form.Group>
             <Form.Group controlId="name-9">
               <Form.ControlLabel>Nome</Form.ControlLabel>
               <Form.Control name="name" />
@@ -348,6 +387,51 @@ const Home = () => {
         </Modal.Footer>
       </Modal>
 
+
+      {/*Modal para abrir página de Adição de Usuário*/}
+      <Modal open={addModal} onClose={handleClose} size="xs">
+        <Modal.Header>
+          <Modal.Title>Adicionar Usuário</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+          <Form fluid onChange={setFormValue} formValue={formValue}>
+            <Form.Group controlId="file-9">
+              <Form.ControlLabel>Selecione a foto do usuário</Form.ControlLabel>
+              <input type='file' />
+              <Form.HelpText>Arquivos suportados: JPG, PNG, JFIF e RAW</Form.HelpText>
+            </Form.Group>
+            <Form.Group controlId="name-9">
+              <Form.ControlLabel>Nome</Form.ControlLabel>
+              <Form.Control name="name" />
+              <Form.HelpText>Preencha este campo</Form.HelpText>
+            </Form.Group>
+            <Form.Group controlId="email-9">
+              <Form.ControlLabel>Email</Form.ControlLabel>
+              <Form.Control name="email" type="email" />
+              <Form.HelpText>Preencha este campo</Form.HelpText>
+            </Form.Group>
+            <Form.Group controlId="password-9">
+              <Form.ControlLabel>Senha</Form.ControlLabel>
+              <Form.Control name="password" type="password" autoComplete="off" />
+              <Form.HelpText>Deve conter entre 4 e 16 caracteres</Form.HelpText>
+            </Form.Group>
+            <Form.Group controlId="confirmedPassword-9">
+              <Form.ControlLabel>Confirmar Senha</Form.ControlLabel>
+              <Form.Control name="confirmedPassword" type="password" autoComplete="off" />
+              <Form.HelpText>Deve ser igual a senha escrita acima</Form.HelpText>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleClose} appearance="subtle">
+            Cancelar
+          </Button>
+          <Button  appearance="primary" color={"green"}>
+            Adicionar
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
 
     </div>

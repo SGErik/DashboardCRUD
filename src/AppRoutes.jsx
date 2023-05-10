@@ -1,8 +1,7 @@
-import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import Login from './pages/Login/Login'
 import Home from './pages/Home/Home'
 import Dashboard from './pages/Dashboard/Dashboard';
-import { Loader } from 'rsuite';
 import "rsuite/dist/rsuite.min.css";
 import { useSelector } from 'react-redux';
 

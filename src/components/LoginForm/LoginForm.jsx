@@ -12,7 +12,7 @@ import {
     Message, Modal
 } from 'rsuite';
 import S from './LoginForm.module.css'
-import { api, authUsers, createUsers } from '../../services/api';
+import { authUsers, createUsers } from '../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSucess } from '../../store/user/user.actions';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +31,8 @@ const LoginForm = () => {
         name: '',
         email: '',
         password: '',
-        confirmedPassword: ''
+        confirmedPassword: '',
+        image: ''
     })
     const toaster = useToaster()
     const dispatch = useDispatch()
@@ -57,9 +58,6 @@ const LoginForm = () => {
 
         })
 
-
-
-
     }
 
 
@@ -67,35 +65,66 @@ const LoginForm = () => {
      function handleSubmit(e) {
         e.preventDefault()
         const response = authUsers(email, password).then((response) => {
-            
+
             const token = response.data.token
             const userInfo = response.data.user
-            
-            
+
+
             console.log(response)
-            
+
             localStorage.setItem('user', JSON.stringify(userInfo));
             localStorage.setItem('token', token);
-            
+
             dispatch(loginSucess(token))
-            
+
             console.log(isAuthenticated)
-            
+
             navigate('/home')
-
-
-
-
 
         }).catch((error) => {
             message = <Message showIcon type='error' closable>{error.response.data.message}</Message>
-            
+
             toaster.push(message, { placement: 'topEnd', duration: 5000 })
 
         })
 
 
     }
+
+
+    const handleImageSubmit = async (e) => {
+
+        const file = e.target.files[0]
+        const base64Image = await convertToBase64(file)
+        setFormValue(prevState => ({
+            ...prevState,
+            image: base64Image
+        }))
+    }
+
+    const convertToBase64 = (file) => {
+
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file)
+
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            }
+
+            fileReader.onerror = (error) => {
+                reject(error);
+            }
+
+        })
+
+    }
+
+
+
+
+
+
 
     const handleOpen = () => {
         setOpen(true)
@@ -148,7 +177,13 @@ const LoginForm = () => {
                     <Modal.Title>Registrar-se</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+
                     <Form fluid onChange={setFormValue} formValue={formValue}>
+                    <Form.Group controlId="file-9">
+                            <Form.ControlLabel>Selecione sua foto</Form.ControlLabel>
+                            <input type='file' onChange={handleImageSubmit}/>
+                            <Form.HelpText>Arquivos suportados: JPG, PNG, JFIF e RAW</Form.HelpText>
+                        </Form.Group>
                         <Form.Group controlId="name-9">
                             <Form.ControlLabel>Nome</Form.ControlLabel>
                             <Form.Control name="name" />

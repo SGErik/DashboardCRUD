@@ -4,3 +4,12 @@
     height: 100%;
     align-items: center;
 }
+
+.imageAvatar {
+    display: flex;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+
+}
