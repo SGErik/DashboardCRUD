@@ -61,7 +61,7 @@ const Header = ({ onClickProp } ) => {
             <Modal.Title>Fazer Logout</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <h5>Tem certeza que deseja sair?</h5>
+            <h6>Tem certeza que deseja sair?</h6>
         </Modal.Body>
         <Modal.Footer>
             <Button  appearance="primary" color={"red"} onClick={handleLogout}>
