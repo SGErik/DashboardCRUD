@@ -48,7 +48,7 @@ export const getOneUser = async (id, token) => {
 export const updatePassword = async (id ,token, formPass) => {
     return api.put(`/users-updatepass/${id}`, formPass, {
         headers: {
-            Authorization: token
+            Authorization: `Bearer ${token}`
         }
     })
 }
