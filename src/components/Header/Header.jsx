@@ -19,6 +19,7 @@ const Header = ({ onClickProp } ) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isAuthenticated } = useSelector(state => state.authReducer)
+    const { isAdmin } = useSelector(state => state.authReducer)
     const [logoutModal, setLogoutModal] = useState(false)
 
   const handleLogout = () => {
@@ -45,15 +46,16 @@ const Header = ({ onClickProp } ) => {
         <Nav>
          <Nav.Item icon={<Icon as={RxDashboard} size='1.1em'/>}>Dashboard</Nav.Item>
         </Nav>
-        <Nav>
-          <Nav.Item href='/home' icon={<Icon as={FaAddressBook} size="1.3em"/>}>Lista de Usuários</Nav.Item>
-        </Nav>
+          { isAdmin ? <Nav>
+              <Nav.Item href='/home' icon={<Icon as={FaAddressBook} size="1.3em"/>}>Lista de Usuários</Nav.Item>
+          </Nav> : ''}
         <Nav pullRight>
           <Nav.Item icon={<Icon as={ImExit} />} onClick={handleLogoutModal}>Logout</Nav.Item>
         </Nav>
-          <Nav pullRight>
-              <Nav.Item icon={<Icon as={BsPersonPlusFill}  size={"1.3em"}/>} onClick={onClickProp}>Adicionar Usuário</Nav.Item>
-          </Nav>
+          {isAdmin ? <Nav pullRight>
+              <Nav.Item icon={<Icon as={BsPersonPlusFill} size={"1.3em"}/>} onClick={onClickProp}>Adicionar
+                  Usuário</Nav.Item>
+          </Nav> : ''}
       </Navbar>
 
     <Modal open={logoutModal} onClose={handleClose} size="xs">
