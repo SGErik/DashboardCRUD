@@ -1,9 +1,9 @@
 
-const adminInfo = localStorage.getItem('isadmin')
+const adminInfo = JSON.parse(localStorage.getItem('isadmin'))
 
 const initialState = {
     isAuthenticated: localStorage.getItem('token') || null,
-    isAdmin: Boolean(localStorage.getItem('isadmin'))|| null
+    isAdmin: JSON.parse(localStorage.getItem('isadmin'))
 }
 
 const authReducer = (state = initialState, action) => {
@@ -13,7 +13,7 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isAuthenticated: action.isAuthenticated,
-                isAdmin: Boolean(action.isAdmin)
+                isAdmin: action.isAdmin
 
             };
         case 'LOGOUT':

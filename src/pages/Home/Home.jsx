@@ -258,6 +258,7 @@ const Home = () => {
   const handleTest = () => {
 
     console.log(selectedUser)
+    console.log(isAdmin)
   }
 
 
