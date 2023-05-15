@@ -10,32 +10,39 @@ import { useSelector } from 'react-redux';
 
 const AppRoutes = () => {
 
-    const Private = ({ children }) => {
+    const PrivateHome = ({ children }) => {
 
         const { isAuthenticated } = useSelector(state => state.authReducer)
+        const { isAdmin } = useSelector(state => state.authReducer)
+
         
         
-            if (!isAuthenticated) {
-                    return <Navigate to="/login" />
-                }
-            
-                return children
+
+        return !isAuthenticated ? <Navigate to={'/login'} /> : (isAuthenticated && !isAdmin ? <Navigate to='/dashboard'/> : children)
             
         }
 
         const PrivateLogin = ({ children }) => {
             
             const { isAuthenticated } = useSelector(state => state.authReducer)
+            const { isAdmin } = useSelector(state => state.authReducer)
 
-            
-            
-            return isAuthenticated ? <Navigate to='/home' /> : children
-            
-            
+
+
+            return isAuthenticated && isAdmin  ? <Navigate to={'/home'} /> : (isAuthenticated && !isAdmin ? <Navigate to={'/dashboard'} /> : children)
         }
+
+        const PrivateDash = ({ children }) => {
+            const { isAuthenticated } = useSelector(state => state.authReducer)
+            const { isAdmin } = useSelector(state => state.authReducer)
+
+
+
+
+            return isAuthenticated && isAdmin ? <Navigate to={'/home'} /> : (!isAuthenticated ? <Navigate to={'/login'} /> : children)
+}
     
-    
-    
+
 
 
 
@@ -46,9 +53,8 @@ const AppRoutes = () => {
             <Routes >
                 <Route path='/' element={<PrivateLogin><Login/></PrivateLogin>} />
                 <Route exact path='/login' element={<PrivateLogin><Login /></PrivateLogin>} />
-                <Route path='/home' element={<Private><Home /></Private>} />
-                <Route path='/dashboard' element={<Private><Dashboard/></Private>} />
-
+                <Route path='/home' element={<PrivateHome><Home /></PrivateHome>} />
+                <Route path='/dashboard' element={<PrivateDash><Dashboard/></PrivateDash>} />
             </Routes>
 
 

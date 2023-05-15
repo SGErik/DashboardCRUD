@@ -14,11 +14,8 @@ import {
 import S from './LoginForm.module.css'
 import { authUsers, createUsers } from '../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginSucess } from '../../store/user/user.actions';
-import { useNavigate } from 'react-router-dom';
-
-
-
+import { loginSuccess } from '../../store/user/user.actions';
+import { useNavigate , redirect } from 'react-router-dom';
 
 
 
@@ -34,10 +31,12 @@ const LoginForm = () => {
         confirmedPassword: '',
         image: ''
     })
+    const [adminBol, setAdminBol] = useState(null)
     const toaster = useToaster()
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const  { isAuthenticated }  = useSelector( state => state.authReducer)
+    const  isAdmin  = useSelector(state => state.authReducer.isAdmin)
 
 
 
@@ -49,7 +48,13 @@ const LoginForm = () => {
             message = <Message showIcon type='success' closable>{response.data.message}</Message>
             toaster.push(message, { placement: 'topEnd', duration: 5000 })
             setOpen(false)
-            setFormValue(null)
+            setFormValue({
+                name: '',
+                email: '',
+                password: '',
+                confirmedPassword: '',
+                image: ''
+            })
 
         }).catch((error) => {
 
@@ -62,30 +67,31 @@ const LoginForm = () => {
 
 
     //Função que faz o login na aplicação ao Clicar no botão de Login
-     function handleSubmit(e) {
+     async function handleSubmit(e) {
         e.preventDefault()
-        const response = authUsers(email, password).then((response) => {
-
+        const response = await authUsers(email, password).then((response)=> {
             const token = response.data.token
             const userInfo = response.data.user
+            const isAdministrator = response.data.user.is_admin
 
-
-            console.log(response)
 
             localStorage.setItem('user', JSON.stringify(userInfo));
             localStorage.setItem('token', token);
+            localStorage.setItem('isadmin', isAdministrator)
 
-            dispatch(loginSucess(token))
+            dispatch(loginSuccess(token, isAdministrator))
 
-            console.log(isAuthenticated)
-
-            navigate('/home')
-
+            if(isAdministrator){
+                return navigate('/home')
+            }else {
+                return navigate('/dashboard')
+            }
         }).catch((error) => {
+
+            console.log(error)
             message = <Message showIcon type='error' closable>{error.response.data.message}</Message>
 
             toaster.push(message, { placement: 'topEnd', duration: 5000 })
-
         })
 
 
@@ -176,11 +182,11 @@ const LoginForm = () => {
                 <Modal.Header>
                     <Modal.Title>Registrar-se</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-
-                    <Form fluid onChange={setFormValue} formValue={formValue}>
+                <Modal.Body align={'center'}>
+                    <img src={formValue.image} alt={'Avatar'} className={S.formImage}/>
+                    <Form fluid onChange={setFormValue} formValue={formValue} align={'start'}>
                     <Form.Group controlId="file-9">
-                            <Form.ControlLabel>Selecione sua foto</Form.ControlLabel>
+                        <Form.ControlLabel>Selecione sua foto</Form.ControlLabel>
                             <input type='file' onChange={handleImageSubmit}/>
                             <Form.HelpText>Arquivos suportados: JPG, PNG, JFIF e RAW</Form.HelpText>
                         </Form.Group>

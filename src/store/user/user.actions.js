@@ -1,7 +1,8 @@
-export const loginSucess = (payload) => {
+export const loginSuccess = (isAuthenticated, isAdmin) => {
     return {
         type: 'LOGIN_SUCCESS',
-        payload: payload
+        isAuthenticated: isAuthenticated,
+        isAdmin: isAdmin
 
     };
 
