@@ -25,6 +25,7 @@ const Home = () => {
   const {Column, HeaderCell, Cell} = Table;
   const {isAuthenticated} = useSelector(state => state.authReducer)
   const { isAdmin } = useSelector(state => state.authReducer)
+  const [tempImage, setTempImage] = useState('')
   const toaster = useToaster()
   const [deleteModal, setDeleteModal] = useState(false)
   const [updateModal, setUpdateModal] = useState(false)
@@ -166,14 +167,15 @@ const Home = () => {
     setSelectedUser(userId)
     const response = await getOneUser(userId, isAuthenticated)
         .then((response) => {
-
           setFormEdit({
             name: response.data.user.name,
             email: response.data.user.email,
-            image: response.data.user.url
           })
+          setTempImage(response.data.user.url)
           setUpdateModal(true)
         })
+
+
   }
 
 
@@ -186,6 +188,7 @@ const Home = () => {
       image: base64Image
     }))
 
+
   }
 
 
@@ -196,7 +199,7 @@ const Home = () => {
       ...prevState,
       image: base64Image
     }))
-    console.log(base64Image)
+    setTempImage(base64Image)
   }
 
   //Função utilizada para a transformação da imagem em base64
@@ -354,7 +357,7 @@ const Home = () => {
             <Modal.Title>Atualizar Informação</Modal.Title>
           </Modal.Header>
           <Modal.Body align='center'>
-            <img alt='avatar' src={formEdit.image} className={S.imageAvatar}/>
+            <img alt='avatar' src={tempImage} className={S.imageAvatar}/>
             <Form fluid onChange={setFormEdit} formValue={formEdit} align='start'>
               <Form.Group controlId="file-9">
                 <Form.ControlLabel>Selecione sua foto</Form.ControlLabel>
