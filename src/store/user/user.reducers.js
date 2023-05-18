@@ -1,6 +1,4 @@
 
-const adminInfo = JSON.parse(localStorage.getItem('isadmin'))
-
 const initialState = {
     isAuthenticated: localStorage.getItem('token') || null,
     isAdmin: JSON.parse(localStorage.getItem('isadmin'))

@@ -24,6 +24,8 @@ const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [loginLoading, setLoginLoading] = useState(false)
     const [formValue, setFormValue] = useState({
         name: '',
         email: '',
@@ -42,6 +44,7 @@ const LoginForm = () => {
 
     //Função que faz o Registro na Aplicação ao clicar no Botão de Registrar
     function handleRegister(e) {
+        setLoading(true)
         e.preventDefault()
         const response = createUsers(formValue).then((response) => {
 
@@ -55,12 +58,13 @@ const LoginForm = () => {
                 confirmedPassword: '',
                 image: ''
             })
+            setLoading(false)
 
         }).catch((error) => {
 
             message = <Message showIcon type='error' closable >{error.response.data.message ? error.response.data.message : error.response.data.error.errors[0].message}</Message>
             toaster.push(message, { placement: 'topEnd', duration: 5000 })
-
+            setLoading(false)
         })
 
     }
@@ -68,6 +72,7 @@ const LoginForm = () => {
 
     //Função que faz o login na aplicação ao Clicar no botão de Login
      async function handleSubmit(e) {
+         setLoginLoading(true)
         e.preventDefault()
         const response = await authUsers(email, password).then((response)=> {
             const token = response.data.token
@@ -80,7 +85,7 @@ const LoginForm = () => {
             localStorage.setItem('isadmin', isAdministrator)
 
             dispatch(loginSuccess(token, isAdministrator))
-
+            setLoginLoading(false)
             if(isAdministrator){
                 return navigate('/home')
             }else {
@@ -92,6 +97,7 @@ const LoginForm = () => {
             message = <Message showIcon type='error' closable>{error.response.data.message}</Message>
 
             toaster.push(message, { placement: 'topEnd', duration: 5000 })
+            setLoginLoading(false)
         })
 
 
@@ -168,7 +174,7 @@ const LoginForm = () => {
                                     </Form.Group>
                                     <Form.Group>
                                         <ButtonToolbar>
-                                            <Button appearance="primary" onClick={handleSubmit}>Login</Button>
+                                            <Button appearance="primary" loading={loginLoading} onClick={handleSubmit}>Login</Button>
                                             <Button appearance='link' onClick={handleOpen}>Registre-se</Button>
                                         </ButtonToolbar>
                                     </Form.Group>
@@ -213,7 +219,7 @@ const LoginForm = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={handleRegister} appearance="primary">
+                    <Button onClick={handleRegister} loading={loading} appearance="primary">
                         Registrar
                     </Button>
                     <Button onClick={handleClose} appearance="subtle">

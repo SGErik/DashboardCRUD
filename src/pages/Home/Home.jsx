@@ -22,6 +22,7 @@ const Home = () => {
   let message
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
+  const [buttonLoading, setButtonLoading] = useState(false)
   const {Column, HeaderCell, Cell} = Table;
   const {isAuthenticated} = useSelector(state => state.authReducer)
   const { isAdmin } = useSelector(state => state.authReducer)
@@ -69,6 +70,7 @@ const Home = () => {
 
 
   const handleAddUser = (e) => {
+    setButtonLoading(true)
     e.preventDefault()
     const response = createUsers(formValue).then((response) => {
 
@@ -83,19 +85,21 @@ const Home = () => {
         image: ''
       })
       fetchUsers()
+      setButtonLoading(false)
 
     }).catch((error) => {
 
       message = <Message showIcon type='error'
                          closable>{error.response.data.message ? error.response.data.message : error.response.data.error.errors[0].message}</Message>
       toaster.push(message, {placement: 'topEnd', duration: 5000})
-
+      setButtonLoading(false)
     })
   }
 
 
   //Função que atualiza as informações do usuário selecionado no banco de dados ao clicar no botão atualizar
   const handleUpdateUser = async (userId) => {
+    setButtonLoading(true)
     await updateUser(userId, isAuthenticated, formEdit)
 
         .then((response) => {
@@ -104,7 +108,12 @@ const Home = () => {
           toaster.push(message, {placement: 'topEnd', duration: 5000})
           setUpdateModal(false)
 
+          setButtonLoading(false)
           fetchUsers()
+        }).catch((error)=> {
+          message = <Message showIcon type='error' closable>{error.response.data.message ? error.response.data.message : error.response.data.error.errors[0].message}</Message>
+          toaster.push(message, {placement: 'topEnd', duration: 5000})
+          setButtonLoading(false)
         })
   }
 
@@ -133,7 +142,7 @@ const Home = () => {
 
   //Função que faz o update da senha do usuário
   const handleUpdatePassword = async (userId) => {
-
+    setButtonLoading(true)
     const response = await updatePassword(userId, isAuthenticated, formPass)
 
         .then((response) => {
@@ -142,19 +151,18 @@ const Home = () => {
           toaster.push(message, {placement: 'topEnd', duration: 5000})
 
           setPasswordModal(false)
-
           setFormPass({
             prevPassword: '',
             passoword: ''
           })
-
+          setButtonLoading(false)
         })
 
         .catch((error) => {
 
           message = <Message showIcon type='error' closable>{error.response.data.message}</Message>
-
           toaster.push(message, {placement: 'topEnd', duration: 5000})
+          setButtonLoading(false)
 
         })
 
@@ -279,6 +287,10 @@ const Home = () => {
                 height={600}
                 data={data}
             >
+              <Column width={40} align='center'>
+                <HeaderCell>id</HeaderCell>
+                <Cell dataKey="id"/>
+              </Column>
               <Column width={90} align='center'>
                 <HeaderCell>Avatar</HeaderCell>
                 <ImageCell dataKey="url"/>
@@ -380,7 +392,7 @@ const Home = () => {
             <Button onClick={handleClose} appearance="subtle">
               Cancelar
             </Button>
-            <Button appearance="primary" color='green' onClick={async () => handleUpdateUser(selectedUser)}>
+            <Button appearance="primary" loading={buttonLoading} color='green' onClick={async () => handleUpdateUser(selectedUser)}>
               Atualizar
             </Button>
           </Modal.Footer>
@@ -409,7 +421,7 @@ const Home = () => {
             <Button onClick={handleClose} appearance="subtle">
               Cancelar
             </Button>
-            <Button appearance="primary" color='green' onClick={async () => handleUpdatePassword(selectedUser)}>
+            <Button appearance="primary" color='green' loading={buttonLoading} onClick={async () => handleUpdatePassword(selectedUser)}>
               Atualizar
             </Button>
           </Modal.Footer>
@@ -455,13 +467,13 @@ const Home = () => {
             <Button onClick={handleClose} appearance="subtle">
               Cancelar
             </Button>
-            <Button appearance="primary" color={"green"} onClick={handleAddUser}>
+            <Button appearance="primary" color={"green"} loading={buttonLoading} onClick={handleAddUser}>
               Adicionar
             </Button>
           </Modal.Footer>
         </Modal>
 
-        <Button appearance={"primary"} onClick={handleTest}>Teste</Button>
+        
       </div>
   )
 }
