@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../../components/Header/Header'
 import { api, getUsers, deleteUsers, getOneUser, updateUser, updatePassword, createUsers } from '../../services/api'
-import { Table, Button, useToaster, Message, Modal, IconButton, Form, FlexboxGrid } from 'rsuite'
+import { Table, Button, useToaster, Message, Modal, IconButton, Form, FlexboxGrid, Toggle } from 'rsuite'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
@@ -29,6 +29,7 @@ const Home = () => {
   const [tempImage, setTempImage] = useState('')
   const toaster = useToaster()
   const [deleteModal, setDeleteModal] = useState(false)
+  const [checked, setChecked] = useState(false)
   const [updateModal, setUpdateModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
   const [addModal, setAddModal] = useState(false)
@@ -38,12 +39,14 @@ const Home = () => {
     email: '',
     password: '',
     confirmedPassword: '',
-    image: ''
+    image: '',
+    is_admin: false
   })
   const [formEdit, setFormEdit] = useState({
     name: '',
     email: '',
-    image: ''
+    image: '',
+    is_admin: false
   })
   const [formPass, setFormPass] = useState({
     prevPassword: '',
@@ -107,7 +110,6 @@ const Home = () => {
           message = <Message showIcon type='success' closable>{response.data.message}</Message>
           toaster.push(message, {placement: 'topEnd', duration: 5000})
           setUpdateModal(false)
-
           setButtonLoading(false)
           fetchUsers()
         }).catch((error)=> {
@@ -178,6 +180,7 @@ const Home = () => {
           setFormEdit({
             name: response.data.user.name,
             email: response.data.user.email,
+            is_admin: response.data.user.is_admin
           })
           setTempImage(response.data.user.url)
           setUpdateModal(true)
@@ -268,8 +271,7 @@ const Home = () => {
 
   const handleTest = () => {
 
-    console.log(selectedUser)
-    console.log(isAdmin)
+    console.log(formEdit.is_admin)
   }
 
 
@@ -280,10 +282,10 @@ const Home = () => {
         {message}
         <Header onClickProp={() => handleModal(setAddModal(true))}/>
         <FlexboxGrid align={"middle"} justify={"center"}>
-          <FlexboxGrid.Item colspan={17}>
+          <FlexboxGrid.Item colspan={18}>
             <Table
                 loading={loading}
-                width={900}
+                width={1100}
                 height={600}
                 data={data}
             >
@@ -301,12 +303,17 @@ const Home = () => {
                 <Cell dataKey="name"/>
               </Column>
 
-              <Column width={300} align='start'>
+              <Column width={200} align='start'>
                 <HeaderCell>Email</HeaderCell>
                 <Cell dataKey="email"/>
               </Column>
+             
+              <Column width={120} align='start'>
+                <HeaderCell>Telefone</HeaderCell>
+                <Cell dataKey="telefone"/>
+              </Column>
 
-              <Column width={130} align='center' fixed={"right"}>
+              <Column width={130} align='center'>
                 <HeaderCell>Editar Informações</HeaderCell>
 
                 <Cell style={{padding: '6px'}}>
@@ -321,7 +328,7 @@ const Home = () => {
               </Column>
 
 
-              <Column width={130} align='center' fixed={"right"}>
+              <Column width={130} align='center'>
 
                 <HeaderCell>Deletar Usuário</HeaderCell>
                 <Cell style={{padding: '6px'}}>
@@ -333,7 +340,7 @@ const Home = () => {
                 </Cell>
               </Column>
 
-              <Column width={130} align='center' fixed={"right"}>
+              <Column width={130} align='center'>
 
                 <HeaderCell>Editar Senha</HeaderCell>
                 <Cell style={{padding: '6px'}}>
@@ -386,6 +393,13 @@ const Home = () => {
                 <Form.Control name="email" type="email"/>
                 <Form.HelpText>Preencha este campo</Form.HelpText>
               </Form.Group>
+              <div className={S.toggleDiv}>
+              Tornar administrador? 
+              <Toggle checked={formEdit.is_admin} onChange={async () => setFormEdit(prevState => ({
+                ...prevState,
+                is_admin: !formEdit.is_admin
+              }))}/>
+              </div>
             </Form>
           </Modal.Body>
           <Modal.Footer>
@@ -395,6 +409,7 @@ const Home = () => {
             <Button appearance="primary" loading={buttonLoading} color='green' onClick={async () => handleUpdateUser(selectedUser)}>
               Atualizar
             </Button>
+            
           </Modal.Footer>
         </Modal>
 
@@ -461,6 +476,13 @@ const Home = () => {
                 <Form.Control name="confirmedPassword" type="password" autoComplete="off"/>
                 <Form.HelpText>Deve ser igual a senha escrita acima</Form.HelpText>
               </Form.Group>
+              <div className={S.toggleDiv}>
+              Este usuário é um administrador? 
+              <Toggle checked={formValue.is_admin} onChange={async () => setFormValue(prevState => ({
+                ...prevState,
+                is_admin: !formValue.is_admin
+              }))}/>
+              </div>
             </Form>
           </Modal.Body>
           <Modal.Footer>

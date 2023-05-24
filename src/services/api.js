@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const api = axios.create({
-    baseURL: "https://apilogin-dev.up.railway.app"
+    baseURL: "http://localhost:3030/"
 });
 
 export const authUsers = async (email, password) => {

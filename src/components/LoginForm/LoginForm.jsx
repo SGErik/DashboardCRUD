@@ -31,6 +31,7 @@ const LoginForm = () => {
         email: '',
         password: '',
         confirmedPassword: '',
+        telefone: '',
         image: ''
     })
     const [adminBol, setAdminBol] = useState(null)
@@ -204,6 +205,11 @@ const LoginForm = () => {
                         <Form.Group controlId="email-9">
                             <Form.ControlLabel>Email</Form.ControlLabel>
                             <Form.Control name="email" type="email" />
+                            <Form.HelpText>Preencha este campo</Form.HelpText>
+                        </Form.Group>
+                        <Form.Group controlId="telefone-9">
+                            <Form.ControlLabel>Telefone</Form.ControlLabel>
+                            <Form.Control name="telefone"  />
                             <Form.HelpText>Preencha este campo</Form.HelpText>
                         </Form.Group>
                         <Form.Group controlId="password-9">

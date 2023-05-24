@@ -14,7 +14,7 @@ import { BsPersonPlusFill } from "react-icons/bs"
 
 
 
-const Header = ({ onClickProp } ) => {
+const Header = ({ onClickProp, userName } ) => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -56,6 +56,11 @@ const Header = ({ onClickProp } ) => {
               <Nav.Item icon={<Icon as={BsPersonPlusFill} size={"1.3em"}/>} onClick={onClickProp}>Adicionar
                   Usuário</Nav.Item>
           </Nav> : ''}
+          {!isAdmin ? <Nav>
+              <Nav.Item>Bem vindo, {userName}</Nav.Item>
+          </Nav> : <Nav pullRight>
+              <Nav.Item>Administrador</Nav.Item>
+          </Nav> }
       </Navbar>
 
     <Modal open={logoutModal} onClose={handleClose} size="xs">
