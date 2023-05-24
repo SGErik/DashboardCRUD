@@ -40,12 +40,14 @@ const Home = () => {
     password: '',
     confirmedPassword: '',
     image: '',
-    is_admin: false
+    is_admin: false,
+    telefone: ''
   })
   const [formEdit, setFormEdit] = useState({
     name: '',
     email: '',
     image: '',
+    telefone: '',
     is_admin: false
   })
   const [formPass, setFormPass] = useState({
@@ -122,14 +124,14 @@ const Home = () => {
 
   //Função que faz a deleção do Usuário selecionado
   const handleDelete = async (id) => {
-
+    setButtonLoading(true)
     await deleteUsers(id, isAuthenticated).then((response) => {
 
       setDeleteModal(false)
 
       message = <Message showIcon type='success' closable>{response.data.message}</Message>
       toaster.push(message, {placement: 'topEnd', duration: 5000})
-
+      setButtonLoading(false)
       fetchUsers()
 
     }).catch((error) => {
@@ -180,6 +182,7 @@ const Home = () => {
           setFormEdit({
             name: response.data.user.name,
             email: response.data.user.email,
+            telefone: response.data.user.telefone,
             is_admin: response.data.user.is_admin
           })
           setTempImage(response.data.user.url)
@@ -365,7 +368,7 @@ const Home = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button appearence='primary' onClick={handleClose}>Cancelar</Button>
-            <Button appearance='primary' color='red' onClick={async () => handleDelete(selectedUser)}>Deletar</Button>
+            <Button  loading={buttonLoading} appearance='primary' color='red' onClick={async () => handleDelete(selectedUser)}>Deletar</Button>
           </Modal.Footer>
         </Modal>
 
@@ -391,6 +394,11 @@ const Home = () => {
               <Form.Group controlId="email-9">
                 <Form.ControlLabel>Email</Form.ControlLabel>
                 <Form.Control name="email" type="email"/>
+                <Form.HelpText>Preencha este campo</Form.HelpText>
+              </Form.Group>
+              <Form.Group controlId="telefone-9">
+                <Form.ControlLabel>Telefone</Form.ControlLabel>
+                <Form.Control name="telefone" />
                 <Form.HelpText>Preencha este campo</Form.HelpText>
               </Form.Group>
               <div className={S.toggleDiv}>
@@ -464,6 +472,11 @@ const Home = () => {
               <Form.Group controlId="email-9">
                 <Form.ControlLabel>Email</Form.ControlLabel>
                 <Form.Control name="email" type="email"/>
+                <Form.HelpText>Preencha este campo</Form.HelpText>
+              </Form.Group>
+              <Form.Group controlId="telefone-9">
+                <Form.ControlLabel>Telefone</Form.ControlLabel>
+                <Form.Control name="telefone"/>
                 <Form.HelpText>Preencha este campo</Form.HelpText>
               </Form.Group>
               <Form.Group controlId="password-9">
