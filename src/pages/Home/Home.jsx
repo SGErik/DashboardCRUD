@@ -20,6 +20,7 @@ import S from './Home.module.css'
 const Home = () => {
 
   let message
+  const storageInfo = JSON.parse(localStorage.getItem('user'))
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [buttonLoading, setButtonLoading] = useState(false)
@@ -289,7 +290,7 @@ const Home = () => {
             <Table
                 loading={loading}
                 width={1100}
-                height={600}
+                height={500}
                 data={data}
             >
               <Column width={40} align='center'>
@@ -402,11 +403,14 @@ const Home = () => {
                 <Form.HelpText>Preencha este campo</Form.HelpText>
               </Form.Group>
               <div className={S.toggleDiv}>
-              Tornar administrador? 
-              <Toggle checked={formEdit.is_admin} onChange={async () => setFormEdit(prevState => ({
-                ...prevState,
-                is_admin: !formEdit.is_admin
-              }))}/>
+              Permitir como Administrador?
+              {
+                storageInfo.id === selectedUser ? <Toggle checkedChildren='Sim' unCheckedChildren='Não'checked={formEdit.is_admin} disabled /> : <Toggle checkedChildren='Sim' unCheckedChildren='Não'checked={formEdit.is_admin} onChange={async () => setFormEdit(prevState => ({
+                  ...prevState,
+                  is_admin: !formEdit.is_admin
+                }))}/>
+              }
+              
               </div>
             </Form>
           </Modal.Body>
@@ -491,7 +495,7 @@ const Home = () => {
               </Form.Group>
               <div className={S.toggleDiv}>
               Este usuário é um administrador? 
-              <Toggle checked={formValue.is_admin} onChange={async () => setFormValue(prevState => ({
+              <Toggle checkedChildren='Sim' unCheckedChildren='Não' checked={formValue.is_admin} onChange={async () => setFormValue(prevState => ({
                 ...prevState,
                 is_admin: !formValue.is_admin
               }))}/>
