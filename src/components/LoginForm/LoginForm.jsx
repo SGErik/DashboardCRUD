@@ -9,18 +9,19 @@ import {
     Panel,
     FlexboxGrid,
     Schema, useToaster,
-    Message, Modal
+    Message, Modal, MaskedInput
 } from 'rsuite';
 import S from './LoginForm.module.css'
 import { authUsers, createUsers } from '../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSuccess } from '../../store/user/user.actions';
-import { useNavigate , redirect } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 
 
 
 const LoginForm = () => {
     let message
+    const mask = ['(', /[1-9]/, /\d/, ')', ' ',/\d/,/\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [open, setOpen] = useState(false)
@@ -51,13 +52,15 @@ const LoginForm = () => {
 
             message = <Message showIcon type='success' closable>{response.data.message}</Message>
             toaster.push(message, { placement: 'topEnd', duration: 5000 })
+            
             setOpen(false)
             setFormValue({
                 name: '',
                 email: '',
                 password: '',
                 confirmedPassword: '',
-                image: ''
+                image: '',
+                telefone: ''
             })
             setLoading(false)
 
@@ -65,6 +68,7 @@ const LoginForm = () => {
 
             message = <Message showIcon type='error' closable >{error.response.data.message ? error.response.data.message : error.response.data.error.errors[0].message}</Message>
             toaster.push(message, { placement: 'topEnd', duration: 5000 })
+            
             setLoading(false)
         })
 
@@ -134,7 +138,12 @@ const LoginForm = () => {
     }
 
 
-
+    const handleSetTelefoneAdd = (value) => {
+        setFormValue(prevState => ({
+            ...prevState,
+            telefone: value
+        }))
+    }
 
 
 
@@ -207,9 +216,9 @@ const LoginForm = () => {
                             <Form.Control name="email" type="email" />
                             <Form.HelpText>Preencha este campo</Form.HelpText>
                         </Form.Group>
-                        <Form.Group controlId="telefone-9">
+                        <Form.Group controlId="telefone">
                             <Form.ControlLabel>Telefone</Form.ControlLabel>
-                            <Form.Control name="telefone"  />
+                            <MaskedInput mask={mask} value={formValue.telefone} onChange={handleSetTelefoneAdd} />
                             <Form.HelpText>Preencha este campo</Form.HelpText>
                         </Form.Group>
                         <Form.Group controlId="password-9">
